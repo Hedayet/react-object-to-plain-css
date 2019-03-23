@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <div style="display: flex; justify-content: center">
+        <a href="https://github.com/Hedayet/css-to-js-object/"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_left_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+      <h1>Convert React object to plain CSS</h1>
+    </div>
+    <div style="display: flex; justify-content: space-around;">
+      <div style="display: flex; flex-direction: column">
+        <textarea id="inp" style="width: 400px; height: 200px;" placeholder="Input your object here"></textarea>
+        <button onclick="convert()">Convert</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column">
+        <textarea id="out" style="width: 400px; height: 200px;"></textarea>
+        <button onclick="copyToClipboard('out')">Copy</button>
+      </div>
+      <div style="display: flex; flex-direction: column">
+          <textarea id="out-formatted" style="width: 400px; height: 200px;"></textarea>
+          <button onclick="copyToClipboard('out-formatted')">Copy</button>
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column; justify-content: center; text-align: center;">
+      <h2>Examples:</h2>
+      <pre>style = {{ display: "flex", justifyContent: "center", textAlign: "center" }}</pre> converts to <pre>style= "display: flex;justify-content: center; text-align: center"</pre>
+      <br/>
+      <pre>{ display: "flex", justifyContent: "center", textAlign: "center" }</pre> converts to <pre>display: flex; justify-content: center; text-align: center;</pre>
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+  String.prototype.replaceAll = function(search, replacement) {
+      var target = this;
+      return target.replace(new RegExp(search, 'g'), replacement);
+  };
+
+  const removeAll = (str, keys) => {
+    for(const i in keys) {
+      if(keys.hasOwnProperty(i)) {
+        str = str.replaceAll(keys[i], '')
+      }
+    }
+    return str;
+  }
+
+  const copyToClipboard = id => {
+    const str = document.getElementById(id).value;
+    const el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+  };
+
+  const convert = () => {
+    let inp = document.getElementById('inp').value;
+    inp = /(.*\{)?(.*)/.exec(inp)[2];
+    inp = removeAll(inp, ['{', '}', '"', '\'']);
+    attrs = inp.split(',')
+    let rets = []
+    for(const i in attrs) {
+      if(!attrs.hasOwnProperty(i)) {
+        continue;
+      }
+      const attr = attrs[i]
+      const splitted = attr.split(':')
+      if(splitted.length === 2) {
+        key = camelCase_to_underScore(splitted[0])
+        val = splitted[1]
+        rets.push(key.trim() + ': ' + val.trim())
+      }
+    }
+    document.getElementById('out').value = inlineStyle(rets)
+    document.getElementById('out-formatted').value = formattedCSS(rets)
+    return false;
+  }
+
+  const inlineStyle = (rets) => {
+    return "style = \"" + rets.join('; ') + ";\"";
+  }
+
+  const formattedCSS = (rets) => {
+    for(let i = 0; i < rets.length; i++) {
+      rets[i] = '  ' + rets[i]
+    }
+    return "{\n" + rets.join(';\n') + "\n}";
+  }
+
+  const camelCase_to_underScore = (str) => {
+    let ret = '';
+    for(let i = 0; i < str.length; i++) {
+      let ch = str[i];
+      if(/^[A-Z]$/.test(ch)) {
+        ret += '-' + ch.toLowerCase();
+        continue;
+      }
+      ret += ch;
+    }
+    return ret;
+  }
+</script>
