@@ -8,7 +8,7 @@
         <a href="https://github.com/Hedayet/react-object-to-plain-css"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_left_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
       <h1>Convert React object to plain CSS</h1>
     </div>
-    <div style="display: flex; justify-content: space-around;">
+    <div style="display: flex; justify-content: space-around; flex-flow: row wrap;">
       <div style="display: flex; flex-direction: column">
         <textarea id="inp" style="width: 400px; height: 200px;" placeholder="Input your object here"></textarea>
         <button onclick="convert()">Convert</button>
@@ -75,7 +75,7 @@
   };
 
   const convert = () => {
-    let inp = document.getElementById('inp').value;
+    let inp = document.getElementById('inp').value.replace(/\n/gi, ' ');
     inp = /(.*\{)?(.*)/.exec(inp)[2];
     inp = removeAll(inp, ['{', '}', '"', '\'']);
     attrs = inp.split(',')
