@@ -30,7 +30,7 @@
 {
   display: flex;
   justify-content: center;
-  text-align: center
+  text-align: center;
 }
       </pre>
       <br/>
@@ -105,7 +105,7 @@
     for(let i = 0; i < rets.length; i++) {
       rets[i] = '  ' + rets[i]
     }
-    return "{\n" + rets.join(';\n') + "\n}";
+    return "{\n" + rets.join(';\n') + ";\n}";
   }
 
   const camelCase_to_underScore = (str) => {
